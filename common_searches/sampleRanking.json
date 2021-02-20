@@ -1,0 +1,34 @@
+[
+  {
+    "technology":       "ruby",
+    "position":         "full_stack",
+    "count":            17,
+    "nb_of_recruiters": 2,
+    "nb_of_companies":  1,
+    "rank":             1
+  },
+  {
+    "technology":       "angular",
+    "position":         "frontend_dev",
+    "count":            15,
+    "nb_of_recruiters": 1,
+    "nb_of_companies":  1,
+    "rank":             2
+  },
+  {
+    "technology":       "angular",
+    "position":         "full_stack_dev",
+    "count":            15,
+    "nb_of_recruiters": 1,
+    "nb_of_companies":  1,
+    "rank":             2
+  },
+  {
+    "technology":       "react",
+    "position":         "full_stack_dev",
+    "count":            13,
+    "nb_of_recruiters": 1,
+    "nb_of_companies":  1,
+    "rank":             4
+  }
+]
