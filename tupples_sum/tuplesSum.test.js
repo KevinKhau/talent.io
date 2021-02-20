@@ -7,6 +7,14 @@ const orderedPositiveCouples = require('./ordered_positive_couples.json');
 const sampleIntegers = [-5, 13, 4, 9, -1, 13];
 const sampleCouples = [[-5, 13], [4, 4], [9, -1]];
 
+/**
+ * Sort couples, and order of couples, by increasing order.
+ */
+function sort(arr) {
+    const sortByFirst = (a, b) => a[0] - b[0];
+    return ([...arr].map(couple => couple.sort()).sort(sortByFirst));
+}
+
 test('givenSampleIntegers_whenGetCouples8_thenSampleCouples', () => {
     const actual = tuplesSum.getCouples(sampleIntegers, 8);
     expect(actual).not.toBeNull();
@@ -18,7 +26,7 @@ test('givenUnorderedIntegers_whenGetCouples150000_thenUnorderedCouples', () => {
     const actual = tuplesSum.getCouples(unorderedIntegers, 150000);
     expect(actual).not.toBeNull();
     expect(actual.length).toEqual(unorderedCouples.length);
-    expect(actual).toStrictEqual(unorderedCouples);
+    expect(sort(actual)).toStrictEqual(sort(unorderedCouples));
 });
 
 test('givenOrderedPositiveIntegers_whenGetCouplesWithOrdered150000_thenOrderedPositiveCouples', () => {
