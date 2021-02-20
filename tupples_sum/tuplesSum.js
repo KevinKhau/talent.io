@@ -4,12 +4,16 @@ module.exports = {
 };
 
 /**
- * Returns a set of couples summing to s.
- * Using hash for direct access, this will result in 0(n) time-complexity.
+ * Returns a set of couples summing to a given number.
+ * Using hash for direct storage and access, this results in 0(n) time-complexity.
  *
- * @param arr integers
- * @param sum wanted sum
- * @return all couples of elements summing to a given number
+ * Note: In a naive for-loop resulting in O(n²) time-complexity, an existing couple is added in pathing order of every
+ * first number. In the hash implementation, a couple is added only after the second number appears in the
+ * pathing order. Thus the resulting array will be ordered differently.
+ *
+ * @param arr array of integers to search in.
+ * @param sum wanted sum.
+ * @return all couples of elements summing to a given number.
  */
 function getCouples(arr, sum) {
     const couples = [];
@@ -26,7 +30,7 @@ function getCouples(arr, sum) {
             couples.push([diff, n]);
             hash[n] = false; // set to further avoid repetitions
         }
-        else    hash[n] = true;
+        else    hash[n] = true; // candidate for couple
     }
 
     return couples;
@@ -35,9 +39,12 @@ function getCouples(arr, sum) {
 /**
  * Returns a set of couples summing to s, searching in an ordered array.
  *
- * @param orderedArr
- * @param sum wanted sum
+ * While the time complexity would remain O(n), we can still optimize and reduce the number of instructions
+ * by using binary searches. The more single elements, the more cost-saving solution.
+ *
+ * @param orderedArr ordered array of integers to search in.
+ * @param sum wanted sum.
  */
 function getCouplesWithOrdered(orderedArr, sum) {
-
+    return getCouples(orderedArr, sum);
 }
