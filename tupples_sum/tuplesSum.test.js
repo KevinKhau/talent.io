@@ -22,8 +22,29 @@ test('givenSampleIntegers_whenGetCouples8_thenSampleCouples', () => {
     expect(actual).toStrictEqual(sampleCouples);
 });
 
+test('givenSampleIntegers_whenGetCouplesWithOrdered8_thenSampleCouples', () => {
+    const actual = tuplesSum.getCouplesWithOrdered(sampleIntegers, 8);
+    expect(actual).not.toBeNull();
+    expect(actual.length).toEqual(sampleCouples.length);
+    expect(actual).toStrictEqual(sampleCouples);
+});
+
 test('givenUnorderedIntegers_whenGetCouples150000_thenUnorderedCouples', () => {
     const actual = tuplesSum.getCouples(unorderedIntegers, 150000);
+    expect(actual).not.toBeNull();
+    expect(actual.length).toEqual(unorderedCouples.length);
+    expect(sort(actual)).toStrictEqual(sort(unorderedCouples));
+});
+
+test('givenOrderedPositiveIntegers_whenGetCouples150000_thenOrderedPositiveCouples', () => {
+    const actual = tuplesSum.getCouples(orderedPositiveIntegers, 150000);
+    expect(actual).not.toBeNull();
+    expect(actual.length).toEqual(orderedPositiveCouples.length);
+    expect(sort(actual)).toStrictEqual(sort(orderedPositiveCouples));
+});
+
+test('givenUnorderedIntegers_whenGetCouplesWithOrdered150000_thenUnorderedCouples', () => {
+    const actual = tuplesSum.getCouplesWithOrdered(unorderedIntegers, 150000);
     expect(actual).not.toBeNull();
     expect(actual.length).toEqual(unorderedCouples.length);
     expect(sort(actual)).toStrictEqual(sort(unorderedCouples));
@@ -33,5 +54,5 @@ test('givenOrderedPositiveIntegers_whenGetCouplesWithOrdered150000_thenOrderedPo
     const actual = tuplesSum.getCouplesWithOrdered(orderedPositiveIntegers, 150000);
     expect(actual).not.toBeNull();
     expect(actual.length).toEqual(orderedPositiveCouples.length);
-    expect(actual).toStrictEqual(orderedPositiveCouples);
+    expect(sort(actual)).toStrictEqual(sort(orderedPositiveCouples));
 });
