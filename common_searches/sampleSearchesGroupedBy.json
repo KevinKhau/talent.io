@@ -1,0 +1,82 @@
+{
+  "ruby": {
+    "full_stack_dev" : [
+      {
+        "recruiter_id": 1,
+        "company_id": 1,
+        "week": 31,
+        "technologies": ["ruby", "react"],
+        "positions": ["full_stack_dev"],
+        "count": 3
+      },
+      {
+        "recruiter_id": 1,
+        "company_id":   1,
+        "week":         32,
+        "technologies": ["ruby", "react"],
+        "positions":    ["full_stack_dev"],
+        "count":        10
+      },
+      {
+        "recruiter_id": 2,
+        "company_id":   1,
+        "week":         33,
+        "technologies": ["ruby"],
+        "positions":    ["full_stack_dev"],
+        "count":        4
+      }
+    ],
+    "backend_dev" : [
+      {
+        "recruiter_id": 2,
+        "company_id":   1,
+        "week":         32,
+        "technologies": ["ruby"],
+        "positions":    ["backend_dev"],
+        "count":        9
+      }
+    ]
+  },
+  "react": {
+    "full_stack_dev" : [
+      {
+        "recruiter_id": 1,
+        "company_id": 1,
+        "week": 31,
+        "technologies": ["ruby", "react"],
+        "positions": ["full_stack_dev"],
+        "count": 3
+      },
+      {
+        "recruiter_id": 1,
+        "company_id":   1,
+        "week":         32,
+        "technologies": ["ruby", "react"],
+        "positions":    ["full_stack_dev"],
+        "count":        10
+      }
+    ]
+  },
+  "angular": {
+    "frontend_dev": [
+      {
+        "recruiter_id": 3,
+        "company_id":   2,
+        "week":         33,
+        "technologies": ["angular"],
+        "positions":    ["frontend_dev", "full_stack_dev"],
+        "count":        15
+      }
+    ],
+    "full_stack_dev": [
+      {
+        "recruiter_id": 3,
+        "company_id":   2,
+        "week":         33,
+        "technologies": ["angular"],
+        "positions":    ["frontend_dev", "full_stack_dev"],
+        "count":        15
+      }
+    ]
+  }
+}

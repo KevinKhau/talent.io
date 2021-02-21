@@ -3,10 +3,18 @@ const commonSearches = require('./commonSearches');
 const sampleSearches = require('./sampleSearches.json');
 const sampleRanking = require('./sampleRanking.json');
 const sampleRankingByCompany = require('./sampleRankingByCompany.json');
+const sampleSearchGroupedBy = require('./sampleSearchesGroupedBy.json');
 
 const searches = require('./searches.json');
 const totalRanking = require('./total_ranking.json');
 const rankingByCompany = require('./ranking_by_company.json');
+
+test('givenSampleSearches_whenGroupBy_thenSampleSearchesGroupedBy', () => {
+    const actual = commonSearches.groupBy(sampleSearches);
+    expect(actual).not.toBeNull();
+    expect(actual.length).toEqual(sampleSearchGroupedBy.length);
+    expect(actual).toStrictEqual(sampleSearchGroupedBy);
+})
 
 test('givenSampleSearches_whenGetRanking_thenSampleRanking', () => {
     const actual = commonSearches.getRanking(sampleSearches);
