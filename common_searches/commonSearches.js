@@ -32,14 +32,32 @@ module.exports = {
  */
 function getRanking(searches, keys = ['technologies', 'positions']) {
     const searchesGroupedBy = groupBy(searches, keys);
-    let ranking = [];
+    const ranking = [];
     digTree(ranking, keys, searchesGroupedBy, []);
-    ranking.sort((result, other) => {
-        const countDiff = other['count'] - result['count'];
-        return countDiff !== 0 ? countDiff : other['nb_of_recruiters'] - result['nb_of_recruiters'];
-    });
     setRanks(ranking);
     return ranking;
+}
+
+/**
+ * Search ranking grouped by companies.
+ *
+ * @param searches
+ * @return ranking of searches grouped by company.
+ */
+function getRankingByCompany(searches) {
+    const keys = ['company_id', 'technologies', 'positions'];
+    const searchesGroupedBy = groupBy(searches, keys);
+    const rankingByCompany = [];
+    for (const [left, right] of Object.entries(searchesGroupedBy)) {
+        const ranking = [];
+        digTree(ranking, keys.slice(1, keys.length), right, [], true);
+        setRanks(ranking);
+        rankingByCompany.push({
+            company_id: mayBeInt(left),
+            ranking
+        });
+    }
+    return rankingByCompany;
 }
 
 /**
@@ -49,16 +67,17 @@ function getRanking(searches, keys = ['technologies', 'positions']) {
  * @param keys Remaining search keys.
  * @param branch Current branch
  * @param entries Key/Value pairs of dug branches.
+ * @param {boolean} excludeNbCompanies Whether or not to exclude `nb_of_companies` property from `#aggregate`
  */
-function digTree(ranking, keys, branch, entries) {
+function digTree(ranking, keys, branch, entries, excludeNbCompanies = false) {
     if (!keys.length) {
-        aggregate(ranking, entries, branch);
+        aggregate(ranking, entries, branch, excludeNbCompanies);
         return;
     }
     for (const [left, right] of Object.entries(branch)) {
         let newEntry = {};
-        newEntry[keys[0]] = left;
-        digTree(ranking, keys.slice(1, keys.length), right, [...entries, newEntry]);
+        newEntry[keys[0]] = mayBeInt(left);
+        digTree(ranking, keys.slice(1, keys.length), right, [...entries, newEntry], excludeNbCompanies);
     }
 }
 
@@ -68,8 +87,9 @@ function digTree(ranking, keys, branch, entries) {
  * @param ranking Ranking array.
  * @param entries Keys the searches have been done with.
  * @param searches Branch with searches.
+ * @param {boolean} excludeNbCompanies Whether or not to exclude property `nb_of_companies`.
  */
-function aggregate(ranking, entries, searches) {
+function aggregate(ranking, entries, searches, excludeNbCompanies = false) {
 
     if (!Array.isArray(searches)) {
         throw new TypeError('Expected type: array');
@@ -93,7 +113,8 @@ function aggregate(ranking, entries, searches) {
     /* Unique */
     const onlyUnique = (value, index, self) => self.indexOf(value) === index;
     result['nb_of_recruiters'] = searches.map(search => search['recruiter_id']).filter(onlyUnique).length;
-    result['nb_of_companies'] = searches.map(search => search['company_id']).filter(onlyUnique).length;
+    if (!excludeNbCompanies)
+        result['nb_of_companies'] = searches.map(search => search['company_id']).filter(onlyUnique).length;
 
     ranking.push(result);
 }
@@ -104,6 +125,14 @@ function aggregate(ranking, entries, searches) {
  * @param ranking Ranking with results.
  */
 function setRanks(ranking) {
+    ranking.sort((result, other) => {
+        const countDiff = other['count'] - result['count']; // Mandatory to correctly assign ranks.
+        if (countDiff !== 0)    return countDiff;
+        const technologyDiff = result['technology'].localeCompare(other['technology']);
+        if (technologyDiff !== 0)   return technologyDiff;
+        return result['position'].localeCompare(other['position']);
+    });
+
     let currentCount = -1, currentRank = 0,
         stack = 1; // consecutive results with same count
     for (let i = 0; i < ranking.length; i++) {
@@ -129,16 +158,6 @@ function groupBy(searches, keys = ['technologies', 'positions']) {
         buildTree(obj, search, keys);
         return obj;
     }, {});
-}
-
-/**
- * Helper to apply a function to a variable which may be an Array.
- * @param {string|array} mayBeArray
- * @param {function} func Applied to given `mayBeArray` param
- */
-function apply(mayBeArray, func) {
-    if (Array.isArray(mayBeArray))   mayBeArray.forEach(func);
-    else    func(mayBeArray);
 }
 
 /**
@@ -173,9 +192,19 @@ function buildTree(branch, search, keys) {
 }
 
 /**
- * @param searches
- * @return ranking of searched grouped by company.
+ * Helper to apply a function to a variable which may be an Array.
+ * @param {string|array} mayBeArray
+ * @param {function} func Applied to given `mayBeArray` param
  */
-function getRankingByCompany(searches) {
+function apply(mayBeArray, func) {
+    if (Array.isArray(mayBeArray))   mayBeArray.forEach(func);
+    else    func(mayBeArray);
+}
 
+/**
+ * Casts str to int, if int.
+ * @param str
+ */
+function mayBeInt(str) {
+    return isNaN(str) ? str : parseInt(str);
 }
