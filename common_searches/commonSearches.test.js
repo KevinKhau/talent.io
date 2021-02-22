@@ -18,6 +18,7 @@ test('givenSampleSearches_whenGroupBy_thenSampleSearchesGroupedBy', () => {
 
 test('givenSampleSearches_whenGetRanking_thenSampleRanking', () => {
     const actual = commonSearches.getRanking(sampleSearches);
+    console.log(actual);
     expect(actual).not.toBeNull();
     expect(actual.length).toEqual(sampleRanking.length);
     expect(actual).toStrictEqual(sampleRanking);

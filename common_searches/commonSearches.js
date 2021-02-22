@@ -1,3 +1,5 @@
+const pluralize = require('pluralize');
+
 module.exports = {
     getRanking,
     getRankingByCompany,
@@ -29,13 +31,98 @@ module.exports = {
  * The ranking should be ordered by rank. In case of equality, order records by alphabetical order on the technology, then position.
  */
 function getRanking(searches, keys = ['technologies', 'positions']) {
-    const groupedBy = groupBy(searches, keys);
+    const searchesGroupedBy = groupBy(searches, keys);
+    let ranking = [];
+    digTree(ranking, keys, searchesGroupedBy, []);
+    ranking.sort((result, other) => {
+        const countDiff = other['count'] - result['count'];
+        return countDiff !== 0 ? countDiff : other['nb_of_recruiters'] - result['nb_of_recruiters'];
+    });
+    setRanks(ranking);
+    return ranking;
+}
+
+/**
+ * Digs the resulting searches tree grouped by given keys.
+ *
+ * @param ranking Ranking array.
+ * @param keys Remaining search keys.
+ * @param branch Current branch
+ * @param entries Key/Value pairs of dug branches.
+ */
+function digTree(ranking, keys, branch, entries) {
+    if (!keys.length) {
+        aggregate(ranking, entries, branch);
+        return;
+    }
+    for (const [left, right] of Object.entries(branch)) {
+        let newEntry = {};
+        newEntry[keys[0]] = left;
+        digTree(ranking, keys.slice(1, keys.length), right, [...entries, newEntry]);
+    }
+}
+
+/**
+ * Aggregates searches to add a result to the ranking.
+ *
+ * @param ranking Ranking array.
+ * @param entries Keys the searches have been done with.
+ * @param searches Branch with searches.
+ */
+function aggregate(ranking, entries, searches) {
+
+    if (!Array.isArray(searches)) {
+        throw new TypeError('Expected type: array');
+    }
+
+    let result = {};
+
+    /* Search Keys */
+    entries.forEach(entry => {
+        const [key, value] = Object.entries(entry)[0];
+        result[pluralize.singular(key)] = value;
+    });
+
+    /* Sums */
+    result['count'] = searches.reduce((a, b) => a + b['count'], 0);
+    /* Conditions */
+    if (result['count'] < 10) {
+        return;
+    }
+
+    /* Unique */
+    const onlyUnique = (value, index, self) => self.indexOf(value) === index;
+    result['nb_of_recruiters'] = searches.map(search => search['recruiter_id']).filter(onlyUnique).length;
+    result['nb_of_companies'] = searches.map(search => search['company_id']).filter(onlyUnique).length;
+
+    ranking.push(result);
+}
+
+/**
+ * Adds `rank` attribute to every result.
+ *
+ * @param ranking Ranking with results.
+ */
+function setRanks(ranking) {
+    let currentCount = -1, currentRank = 0,
+        stack = 1; // consecutive results with same count
+    for (let i = 0; i < ranking.length; i++) {
+        const result = ranking[i];
+        if (currentCount !== result['count']) {
+            currentRank += stack;
+            stack = 1;
+        } else {
+            stack++;
+        }
+        result['rank'] = currentRank;
+        currentCount = result['count'];
+    }
 }
 
 /**
  * Group searches by the given array keys.
  *
- * @return an object whose keys are values of searched keys
+ * @return {{}} an object whose keys are values of searched keys
  */
 function groupBy(searches, keys = ['technologies', 'positions']) {
     return searches.reduce((obj, search) => {
@@ -51,7 +138,7 @@ function groupBy(searches, keys = ['technologies', 'positions']) {
  */
 function apply(mayBeArray, func) {
     if (Array.isArray(mayBeArray))   mayBeArray.forEach(func);
-    else    mayBeArray(mayBeArray);
+    else    func(mayBeArray);
 }
 
 /**
