@@ -5,11 +5,12 @@ module.exports = {
 
 /**
  * Returns a set of couples summing to a given number.
- * Using hash for direct storage and access, this results in 0(n) time-complexity.
+ * Using hash for direct storage and access, this results in 0(n) time-complexity. The space complexity is O(n), since
+ * additional memory is required for longer input. The worst space case is when there is no couple match.
  *
- * Note: In a naive for-loop resulting in O(n²) time-complexity, an existing couple is added in pathing order of every
- * first number. In the hash implementation, a couple is added only after the second number appears in the
- * pathing order. Thus the resulting array will be ordered differently.
+ * Note: In a naive for-loop resulting in O(n²) time-complexity and O(1) space-complexity, an existing couple
+ * is added in pathing order of every first number. In the hash implementation, a couple is added only
+ * after the second number appears in the pathing order. Thus the resulting array will be ordered differently.
  *
  * @param arr array of integers to search in.
  * @param sum wanted sum.
