@@ -1,3 +1,5 @@
+Try it out here: https://kevinkhau.github.io/coloured_squares/
+
 ## What this application does
 
 Click on a corner button, and the corresponding color will be added to the central stack of squares.
